@@ -6,6 +6,38 @@ import DataBaseAPI from './js/dataBaseAPI';
 
 const dataBaseAPI = new DataBaseAPI();
 
+const film = {
+  id: 1,
+  imageUk: 'http://www.hdkinoteatr.com/uploads/posts/2012-05/kp4facbec091fac.jpg',
+  imageEn: 'http://www.hdkinoteatr.com/uploads/posts/2012-05/kp4facbec091fac.jpg',
+  titleUk: 'title of film',
+  titleEn: 'title of film',
+  vote: '8.3',
+  votes: '12300',
+  popularity: '111.2',
+  genreUk: 'Genre of film', //Возвращается текст, НЕ ID!
+  genreEn: 'Genre of film', //Возвращается текст, НЕ ID!
+  aboutUk: `Four of the West’s most infamous outlaws assemble to steal a huge stash of gold from the most corrupt`,
+  aboutEn: `Four of the West’s most infamous outlaws assemble to steal a huge stash of gold from the most corrupt`,
+  reliseData: '2010',
+};
+const filmNew = {
+  id: 1234,
+  imageUk: 'http://www.hdkinoteatr.com/uploads/posts/2012-05/kp4facbec091fac.jpg',
+  imageEn: 'http://www.hdkinoteatr.com/uploads/posts/2012-05/kp4facbec091fac.jpg',
+  titleUk: 'title of film',
+  titleEn: 'title of film',
+  vote: '8.3',
+  votes: '12300',
+  popularity: '111.2',
+  genreUk: 'Genre of film', //Возвращается текст, НЕ ID!
+  genreEn: 'Genre of film', //Возвращается текст, НЕ ID!
+  aboutUk: `Four of the West’s most infamous outlaws assemble to steal a huge stash of gold from the most corrupt`,
+  aboutEn: `Four of the West’s most infamous outlaws assemble to steal a huge stash of gold from the most corrupt`,
+  reliseData: '2010',
+  watched: true,
+  queue: true,
+};
 storageCheck();
 
 dataBaseAPI.logOut();
@@ -31,9 +63,22 @@ async function onFormAuthenticationSubmit(e) {
 
   const email = e.target.login.value;
   const pasword = e.target.pasword.value;
-  logIn(email, pasword);
+  await logIn(email, pasword);
+  // dataBaseAPI.addMovieToLibrary({
+  //   category: dataBaseAPI.user.watched,
+  //   film: film,
+  // });
 
-  localStorage.setItem('user', JSON.stringify({ email: email, pasword: pasword }));
+  // await dataBaseAPI.removeMovieFromLibrary({
+  //   category: dataBaseAPI.user.watched,
+  //   id: '0',
+  // });
+  // console.log('getLiberuStatu: ', dataBaseAPI.getLiberuStatus('1'));
+
+  // console.log('resetLiberuStatus: ', dataBaseAPI.resetLiberuStatus(filmNew));
+
+  // localStorage.setItem('user', JSON.stringify({ email: email, pasword: pasword }));
+  console.log(dataBaseAPI.getFilmByid({ category: dataBaseAPI.user.watched, id: '123' }));
 }
 
 async function onContainerClick(e) {
@@ -70,9 +115,10 @@ function onAddClick(e) {
 
 async function logIn(email, pasword) {
   console.log(await dataBaseAPI.logIn({ email: email, pasword: pasword }));
-  dataBaseAPI.onСhangeUserData([createMarkup]);
-  refs.logIn.innerHTML = dataBaseAPI.user.email;
-  createMarkup();
+
+  // dataBaseAPI.onСhangeUserData([createMarkup]);
+  // refs.logIn.innerHTML = dataBaseAPI.user.email;
+  // createMarkup();
 }
 
 function storageCheck() {
