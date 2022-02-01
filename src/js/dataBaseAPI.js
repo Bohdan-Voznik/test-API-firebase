@@ -135,7 +135,8 @@ export default class dataBaseApiServise {
   }
 
   async registration({ login = '', pasword = '' }) {
-    console.log(login);
+    // console.log(login)
+
     const data = await this.getDataByRef(formatEmail(login));
     console.log('data: ', data);
 

@@ -143,6 +143,7 @@ function storageCheck() {
   if (!user) {
     return;
   }
+
   const { email, pasword } = user;
   logIn(email, pasword);
 }
