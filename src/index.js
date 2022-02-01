@@ -78,6 +78,8 @@ async function onFormAuthenticationSubmit(e) {
   const email = e.target.login.value;
   const pasword = e.target.pasword.value;
   await logIn(email, pasword);
+  refs.logIn.innerHTML = `${email}`;
+
   // dataBaseAPI.addMovieToLibrary({
   //   category: dataBaseAPI.user.watched,
   //   film: film,
