@@ -135,7 +135,8 @@ export default class dataBaseApiServise {
   }
 
   async registration({ login = '', pasword = '' }) {
-    console.log(login);
+    // console.log(login)
+
     const data = await this.getDataByRef(formatEmail(login));
     console.log('data: ', data);
 
@@ -216,15 +217,22 @@ export default class dataBaseApiServise {
       reliseData,
     };
 
+    console.log('test');
+
     if (watched) {
       console.log('watched - OK');
       this.addMovieToLibrary({ category: this.user.watched, film: data });
+    } else {
+      this.removeMovieFromLibrary({ category: this.user.watched, id: data.id });
     }
 
     if (queue) {
       console.log('queue - OK');
       this.addMovieToLibrary({ category: this.user.queue, film: data });
+    } else {
+      this.removeMovieFromLibrary({ category: this.user.queue, id: data.id });
     }
+
     console.log(this.user);
   }
 
