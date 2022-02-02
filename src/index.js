@@ -3,6 +3,7 @@ import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, get, update } from 'firebase/database';
 import modalTpl from './partials/modal-fim-info.hbs';
 import ModalFilm from './js/modal-film-info';
+import * as filmsApi from './js/film-list';
 
 import DataBaseAPI from './js/dataBaseAPI';
 
@@ -59,6 +60,8 @@ const filmList = document.querySelector('.film__list');
 const modalInfo = document.querySelector('.background');
 const modalInfoCloseBtn = document.querySelector('.modal__close-btn');
 const modalContent = document.querySelector('.modal__content');
+const ulItem = document.querySelector('.film__list');
+const btnsCategories = document.querySelector('.liberi-categories');
 
 let filmId = null;
 let btnWatched = null;
@@ -71,7 +74,22 @@ refs.formAuthentication.addEventListener('submit', onFormAuthenticationSubmit);
 
 filmList.addEventListener('click', openInfoModal);
 modalInfoCloseBtn.addEventListener('click', closeInfoModal);
+btnsCategories.addEventListener('click', openCategory);
 
+function openCategory (e) {
+  const categoryStatus = e.target.dataset.category;
+  if (categoryStatus === 'watched') {
+    const data = filmsApi.createMarkup (dataBaseAPI.user.watched);
+    ulItem.innerHTML = data;
+    
+  }
+  if (categoryStatus === 'queue') {
+    const data = filmsApi.createMarkup (dataBaseAPI.user.queue);
+    ulItem.innerHTML = data;
+    console.log(data);
+  }
+  console.log (e.target);
+}
 // lol@gmail.com
 
 async function onFormAuthenticationSubmit(e) {
@@ -80,6 +98,12 @@ async function onFormAuthenticationSubmit(e) {
   const email = e.target.login.value;
   const pasword = e.target.pasword.value;
   await logIn(email, pasword);
+  refs.logIn.innerHTML = `${email}`;
+  console.log (123, dataBaseAPI.user.watched);
+  console.log (filmsApi.createMarkup);
+
+  
+
   // dataBaseAPI.addMovieToLibrary({
   //   category: dataBaseAPI.user.watched,
   //   film: film,
