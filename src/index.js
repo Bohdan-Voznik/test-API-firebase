@@ -2,10 +2,12 @@ import './sass/main.scss';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, get, update } from 'firebase/database';
 import modalTpl from './partials/modal-fim-info.hbs';
+import ModalFilm from './js/modal-film-info';
 
 import DataBaseAPI from './js/dataBaseAPI';
 
 const dataBaseAPI = new DataBaseAPI();
+const modalFilm = new ModalFilm();
 
 const film = {
   id: 1,
@@ -109,15 +111,15 @@ async function onFormAuthenticationSubmit(e) {
 //   console.log(dataBaseAPILlo);
 // }
 
-function createMarkup() {
-  const markups = dataBaseAPI.user.queue
-    .map(markup => {
-      return `<div data-id="${markup}" style="cursor:pointer">${markup}. ID</div><br>`;
-    })
-    .join('');
-  console.log(markups);
-  refs.container.innerHTML = markups;
-}
+// function createMarkup() {
+//   const markups = dataBaseAPI.user.queue
+//     .map(markup => {
+//       return `<div data-id="${markup}" style="cursor:pointer">${markup}. ID</div><br>`;
+//     })
+//     .join('');
+//   console.log(markups);
+//   refs.container.innerHTML = markups;
+// }
 
 // function onAddClick(e) {
 //   e.preventDefault();
@@ -148,16 +150,11 @@ function storageCheck() {
   logIn(email, pasword);
 }
 
-function loadInfo(filmObj) {
-  //Подставляем инфу про фильм в модалку (в hbs):
-  modalContent.insertAdjacentHTML('beforeend', modalTpl(filmObj));
-}
-
 function checkButtonData() {
-  if (filmObj.watched) btnWatched.classList.add('selected');
+  if (modalFilm.objFilm.watched) btnWatched.classList.add('selected');
   else btnWatched.classList.remove('selected');
 
-  if (filmObj.queue) btnQueue.classList.add('selected');
+  if (modalFilm.objFilm.queue) btnQueue.classList.add('selected');
   else btnQueue.classList.remove('selected');
 }
 
@@ -166,10 +163,11 @@ function openInfoModal(e) {
   const filmCard = e.target.closest('.film__item');
   filmId = filmCard.dataset.id;
 
-  filmObj = dataBaseAPI.getFilmByid({ category: dataBaseAPI.user.watched, id: filmId });
+  modalFilm.setFilm = dataBaseAPI.getFilmByid({ category: dataBaseAPI.user.watched, id: filmId });
 
   document.body.style.overflow = 'hidden'; //Запрещаем прокрутку body, пока открыта модалка
-  loadInfo(filmObj); //Передаем в функцию объект:
+
+  modalContent.insertAdjacentHTML('beforeend', modalFilm.createMarkup());
 
   //Находим кнопки по data-att:
   btnWatched = document.querySelector('button[data-watched]');
@@ -185,42 +183,38 @@ function openInfoModal(e) {
   if (filmCard) modalInfo.classList.toggle('is-hidden'); //открываем модалку, убирая класс
 }
 
-function closeInfoModal() {
-  document.body.style.overflow = 'auto'; //Разрешаем прокрутку body, пока модалка закрыта
-  modalInfo.classList.toggle('is-hidden'); //скрываем модалку, вешая класс
-  modalContent.innerHTML = ''; //Очистка макета модалки (данные о фильме в объекте загружаются динамически и хранятся в объекте)
-  sendObj(filmObj);
-}
-
-//Обработка кликов по кнопкам в модалке:
-
 function addToWatched() {
-  //Запуск функции отслеживания
-
-  if (filmObj.watched) {
+  if (modalFilm.objFilm.watched) {
     btnWatched.classList.remove('selected');
-    filmObj.watched = false;
-    btnWatched.setAttribute('data-watched', filmObj.watched);
+    modalFilm.objFilmWatched = false;
+    btnWatched.setAttribute('data-watched', modalFilm.objFilm.watched);
   } else {
     btnWatched.classList.add('selected');
-    filmObj.watched = true;
-    btnWatched.setAttribute('data-watched', filmObj.watched);
+    modalFilm.objFilmWatched = true;
+    btnWatched.setAttribute('data-watched', modalFilm.objFilm.watched);
   }
 }
 
 function addToQueue() {
-  if (filmObj.queue) {
+  if (modalFilm.objFilm.queue) {
     btnQueue.classList.remove('selected');
-    filmObj.queue = false;
-    btnQueue.setAttribute('data-queue', filmObj.queue);
+    modalFilm.objFilmQueue = false;
+    btnQueue.setAttribute('data-queue', modalFilm.objFilm.queue);
   } else {
     btnQueue.classList.add('selected');
-    filmObj.queue = true;
-    btnQueue.setAttribute('data-queue', filmObj.queue);
+    modalFilm.objFilmQueue = true;
+    btnQueue.setAttribute('data-queue', modalFilm.objFilm.queue);
   }
 }
 
-function sendObj(filmObj) {
-  console.log('filmObj = ', filmObj);
-  'resetLiberuStatus: ', dataBaseAPI.resetLiberuStatus(filmObj);
+function closeInfoModal() {
+  document.body.style.overflow = 'auto'; //Разрешаем прокрутку body, пока модалка закрыта
+  modalInfo.classList.toggle('is-hidden'); //скрываем модалку, вешая класс
+  modalContent.innerHTML = ''; //Очистка макета модалки (данные о фильме в объекте загружаются динамически и хранятся в объекте)
+  sendObj();
+}
+
+function sendObj() {
+  console.log('filmObj = ', modalFilm.objFilm);
+  'resetLiberuStatus: ', dataBaseAPI.resetLiberuStatus(modalFilm.objFilm);
 }
